@@ -1,55 +1,40 @@
-#Shanbay-Alfred2-Workflow
+# Shanbay-Alfred2-Workflow
 
-扇贝网Alfred2 workflow，主要用于单词查询、添加单词到词库、例句查询、收藏例句等。
+扇贝网Alfred2 workflow，主要用于单词查询、添加单词到词库、发音。
 
 
 ## 安装
-下载[`Shanbay.alfredworkflow`](https://github.com/henter/Shanbay-Alfred2/blob/master/Shanbay.alfredworkflow?raw=true)文件
+
+下载[`Shanbay.alfredworkflow`](https://github.com/alswl/shanbay-alfred2/raw/master/Shanbay.alfredworkflow)文件
 
 双击文件导入即可。
 
-如果要用添加到词库或查例句等功能，需要授权：
-
-输入 `sbe test`，回车跳转到扇贝授权页面，点授权后跳转。
-
-复制授权码
-
-调出Alfred2，输入 `sbcode `，粘贴授权码，回车。
-
-![sbcode](https://sbalfred.sinaapp.com/static/sbcode.png)
-
-授权完成~
-
-注：授权有效期为一个月，过期需重新授权。
-
 ## 使用
 
-###查单词
+*   授权
+    *   任意使用查询功能，如 `sb love` 会检查权限情况，如果权限不存在或过期，会自动进入授权页面
+    *   在扇贝官网的授权界面输入帐号密码，然后授权
+    *   出现 `Shanbay OAuth2` 之后，将完整的 URL 复制下来，并在 Alfred 里面输入 `sbauth https://api.shanbay.com/oauth2/auth/success/#access_token=xxx&token_type=Bearer&state=&expires_in=2592000&scope=read+write`（后面的 URL请替换为你自己复制的 URL）
+    *   授权完成，使用 `sb love` 测试，按回车即可以添加到单词库
+*   查单词
+    *   使用 `sb love` 查询单词
+*   添加到单词库
+    *   使用 `sb love` 查询单词，然后使用回车即添加到单词库
+*   打开单词
+    *   使用 `sb love` 查询单词，按住 `Command` + 回车，打开扇贝官网对应的单词页面
+*   听发音
+    *   使用 `sb love` 查询单词，按住 `Ctrl` + 回车，即可播放语音
 
-`sb love`
 
-![sb](https://sbalfred.sinaapp.com/static/sb.png)
-
-### 添加到单词库
-
-	直接敲回车，将单词添加到单词库 
-	或按住`command`敲回车打开单词网页
-
-![sb_add](https://sbalfred.sinaapp.com/static/sb_add.png)
-
-### 查例句
-
-`sbe love`
-
-![sbe](https://sbalfred.sinaapp.com/static/sbe.png)
-
-### 收藏例句
-	
-	直接敲回车，收藏该例句
-
-![sbe_add](https://sbalfred.sinaapp.com/static/sbe_add.png)
+注：授权有效期为一个月，过期需重新授权。
 
 
 ## 其它
 
-欢迎提BUG
+感谢原作者 [https://github.com/henter/Shanbay-Alfred2](https://github.com/henter/Shanbay-Alfred2) 开发。
+
+我的改进：
+
+*   不使用 code 授权模式，改为 token 直接授权，不用打开一个第三方网站
+*   支持听单词语音
+*   移除例句查询功能
