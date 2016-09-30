@@ -18,11 +18,15 @@ from alfred.feedback import Feedback
 
 
 TOKEN_FILE = os.path.abspath('token')
-CLIENT_ID = '7f652079ade6d4fa4eec'
-SEARCH_API_URL = 'https://api.shanbay.com/bdc/search/'
-LEARNING_API = 'https://api.shanbay.com/bdc/learning/'
-REDIRECT_URI = 'https://api.shanbay.com/oauth2/auth/success/'
 ALFRED_WORD_AUDIO_MP3_FILE = '/tmp/alfred_word_audio.mp3'
+
+CLIENT_ID = '7f652079ade6d4fa4eec'
+
+SEARCH_API = 'https://api.shanbay.com/bdc/search/'
+LEARNING_API = 'https://api.shanbay.com/bdc/learning/'
+AUTHORIZE_API = 'https://api.shanbay.com/oauth2/authorize/'
+REDIRECT_URL = 'https://api.shanbay.com/oauth2/auth/success/'
+VOCABULARY_URL = 'https://www.shanbay.com/bdc/vocabulary/%d/'
 
 
 def _request(path, params=None, method='GET', data=None, headers=None):
@@ -49,7 +53,6 @@ def _api(path, params=None, method='GET', data=None, headers=None):
 
 
 def save_token(url):
-    #url = 'https://api.shanbay.com/oauth2/auth/success/#access_token=JnaN2POht3aaR2IJpfLEV32txhvTqb&token_type=Bearer&state=&expires_in=2592000&scope=read+write'
     parse_result = urlparse(url)
     data = dict(map(lambda x: x.split('='), parse_result.fragment.split('&')))
     data['expires_in'] = int(data['expires_in'])
@@ -57,10 +60,18 @@ def save_token(url):
     with(open(TOKEN_FILE, 'w')) as token_file:
         token_file.write(json.dumps(data))
 
+def read_token():
+    if not os.path.isfile(TOKEN_FILE):
+        return False
+    token_json = json.loads(open(TOKEN_FILE).read())
+    if token_json['timestamp'] + token_json['expires_in'] < int(time.time()):
+        return False
+    return token_json['access_token']
+
 
 def search(word):
     feedback = Feedback()
-    data = _api(SEARCH_API_URL, params={'word': word})
+    data = _api(SEARCH_API, params={'word': word})
     if data is None:
         return
 
@@ -82,25 +93,18 @@ def search(word):
 
 
 def token_url(url):
-    if not url.startswith('https://api.shanbay.com/oauth2/auth/success/#'):
+    if not url.startswith('%s#' % REDIRECT_URL):
         return
-    return save_token(url)
+    save_token(url)
+    print('Authorize successful')
 
-
-def read_token():
-    if not os.path.isfile(TOKEN_FILE):
-        return False
-    token_json = json.loads(open(TOKEN_FILE).read())
-    if token_json['timestamp'] + token_json['expires_in'] < int(time.time()):
-        return False
-    return token_json['access_token']
 
 
 def learning(word):
     access_token = read_token()
     if not access_token:
         return authorize()
-    search_data = _api(SEARCH_API_URL, params={'word': word})
+    search_data = _api(SEARCH_API, params={'word': word})
     if search_data is None:
         return
     data = _api(LEARNING_API,
@@ -110,16 +114,16 @@ def learning(word):
     if data is None:
         print('"%s" Add Fail' % word)
         return
-    print('"%s" Add Success' % word)
+    print('"%s" Add Successful' % word)
 
 
 def authorize():
-    url = 'https://api.shanbay.com/oauth2/authorize/?client_id=%s&response_type=token' % CLIENT_ID
+    url = '%s?client_id=%s&response_type=token' % (AUTHORIZE_API, CLIENT_ID)
     os.system('open "%s"' % url)
 
 
 def sound(word):
-    data = _api(SEARCH_API_URL, params={'word': word})
+    data = _api(SEARCH_API, params={'word': word})
     if data is None:
         return
     audio_address = data['audio_addresses']['us'][0]
@@ -128,12 +132,13 @@ def sound(word):
     subprocess.call(['/usr/bin/afplay', ALFRED_WORD_AUDIO_MP3_FILE])
 
 
-def open(word):
-    data = _api(SEARCH_API_URL, params={'word': word})
+def open_word(word):
+    data = _api(SEARCH_API, params={'word': word})
     if data is None:
         return
-    url = 'http://www.shanbay.com/bdc/vocabulary/%d/' % data['id']
+    url = VOCABULARY_URL % data['id']
     os.system('open "%s"' % url)
+
 
 
 def main():
@@ -155,7 +160,7 @@ def main():
     elif args.sound:
         sound(args.sound)
     elif args.open:
-        open(args.open)
+        open_word(args.open)
     else:
         pass
 
