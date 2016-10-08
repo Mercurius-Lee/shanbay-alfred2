@@ -5,7 +5,7 @@
 
 ## 安装
 
-下载[`Shanbay.alfredworkflow`](https://github.com/alswl/shanbay-alfred2/raw/master/Shanbay.alfredworkflow)文件
+下载[`Shanbay.alfredworkflow`](https://github.com/alswl/shanbay-alfred2/releases)里面的最新版本。
 
 双击文件导入即可。
 
