@@ -28,6 +28,11 @@
 
 注：授权有效期为一个月，过期需重新授权。
 
+## 截图
+
+*   ![love](https://github.com/alswl/shanbay-alfred2/raw/master/snapshot/sb_love.png)
+*   ![auth](https://github.com/alswl/shanbay-alfred2/raw/master/snapshot/sb_auth.png)
+*   ![sound](https://github.com/alswl/shanbay-alfred2/raw/master/snapshot/sb_sound.png)
 
 ## 其它
 
