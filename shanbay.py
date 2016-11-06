@@ -107,10 +107,16 @@ def learning(word):
     search_data = _api(SEARCH_API, params={'word': word})
     if search_data is None:
         return
-    data = _api(LEARNING_API,
-                data=urllib.urlencode({'id': search_data['id']}),
-                headers={'Authorization': 'Bearer %s' % access_token},
-                method='POST')
+    try:
+        data = _api(LEARNING_API,
+                    data=urllib.urlencode({'id': search_data['id']}),
+                    headers={'Authorization': 'Bearer %s' % access_token},
+                    method='POST')
+    except urllib2.HTTPError, e:
+        if e.code == 401:
+            return authorize()
+        else:
+            print('"%s" Add Fail, e: %s' % (word, e))
     if data is None:
         print('"%s" Add Fail' % word)
         return
