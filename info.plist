@@ -129,9 +129,9 @@
 				<key>queuedelayimmediatelyinitially</key>
 				<false/>
 				<key>queuedelaymode</key>
-				<integer>0</integer>
-				<key>queuemode</key>
 				<integer>1</integer>
+				<key>queuemode</key>
+				<integer>2</integer>
 				<key>runningsubtext</key>
 				<string>查询中...</string>
 				<key>script</key>
@@ -156,7 +156,7 @@
 			<key>config</key>
 			<dict>
 				<key>concurrently</key>
-				<false/>
+				<true/>
 				<key>escaping</key>
 				<integer>62</integer>
 				<key>script</key>
@@ -175,7 +175,7 @@
 			<key>config</key>
 			<dict>
 				<key>concurrently</key>
-				<false/>
+				<true/>
 				<key>escaping</key>
 				<integer>62</integer>
 				<key>script</key>
@@ -219,7 +219,7 @@
 			<key>config</key>
 			<dict>
 				<key>concurrently</key>
-				<false/>
+				<true/>
 				<key>escaping</key>
 				<integer>62</integer>
 				<key>script</key>
@@ -231,6 +231,27 @@
 			<string>alfred.workflow.action.script</string>
 			<key>uid</key>
 			<string>BC572844-02F4-41E6-B880-4EBC3BAE5D4A</string>
+			<key>version</key>
+			<integer>0</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>0</integer>
+				<key>keyword</key>
+				<string>sbauth</string>
+				<key>subtext</key>
+				<string>粘贴授权码，授权后可以添加单词、查询例句、收藏例句等。</string>
+				<key>text</key>
+				<string>扇贝网授权</string>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>33FF9C52-75C4-440D-8857-D827047E0215</string>
 			<key>version</key>
 			<integer>0</integer>
 		</dict>
@@ -256,27 +277,6 @@
 			<string>alfred.workflow.output.notification</string>
 			<key>uid</key>
 			<string>81B77168-E9EE-4DFD-B01A-8C5FFC8F74E2</string>
-			<key>version</key>
-			<integer>0</integer>
-		</dict>
-		<dict>
-			<key>config</key>
-			<dict>
-				<key>argumenttype</key>
-				<integer>0</integer>
-				<key>keyword</key>
-				<string>sbauth</string>
-				<key>subtext</key>
-				<string>粘贴授权码，授权后可以添加单词、查询例句、收藏例句等。</string>
-				<key>text</key>
-				<string>扇贝网授权</string>
-				<key>withspace</key>
-				<true/>
-			</dict>
-			<key>type</key>
-			<string>alfred.workflow.input.keyword</string>
-			<key>uid</key>
-			<string>33FF9C52-75C4-440D-8857-D827047E0215</string>
 			<key>version</key>
 			<integer>0</integer>
 		</dict>
