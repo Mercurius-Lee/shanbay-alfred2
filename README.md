@@ -45,3 +45,10 @@
 *   移除例句查询功能
 *   移除 `requests` 依赖，即装即用
 *   除了原项目的资源文件，重写了代码，这么简单的一个项目就简单写写了
+
+
+## 打包
+
+```
+zip -r /tmp/shanbay-alfred2_`git rev-parse --short HEAD`.alfredworkflow . -x \*.git\* -x token -x tags -x \*.DS_Store\* -x \*.pyc\* -x \*snapshot\*
+```
