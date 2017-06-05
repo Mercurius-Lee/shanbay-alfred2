@@ -60,6 +60,7 @@ def save_token(url):
     with(open(TOKEN_FILE, 'w')) as token_file:
         token_file.write(json.dumps(data))
 
+
 def read_token():
     if not os.path.isfile(TOKEN_FILE):
         return False
@@ -97,7 +98,6 @@ def token_url(url):
         return
     save_token(url)
     print('Authorize successful')
-
 
 
 def learning(word):
@@ -146,7 +146,6 @@ def open_word(word):
     os.system('open "%s"' % url)
 
 
-
 def main():
     parser = argparse.ArgumentParser()
 
@@ -169,6 +168,7 @@ def main():
         open_word(args.open)
     else:
         pass
+
 
 if __name__ == '__main__':
     main()
