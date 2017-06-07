@@ -36,7 +36,7 @@ def _request(path, params=None, method='GET', data=None, headers=None):
         url = path + '?' + urllib.urlencode(params)
     else:
         url = path
-    
+
     request = urllib2.Request(url, data, headers)
     request.get_method = lambda: method
     response = urllib2.urlopen(request)
@@ -79,10 +79,10 @@ def search(word):
     word = data['content']
     pron = data['pron']
     title = "%s [%s]" % (word, pron)
-    subtitle = data['definition'].decode("utf-8")
-    subtitle = subtitle.replace('\n', ' ') #.replace('&', '')
+    feedback.addItem(title=title, arg=word)
+    for chinese in data['definition'].decode("utf-8").split('\n'):
+        feedback.addItem(title = chinese, arg = word)
 
-    feedback.addItem(title=title, subtitle=subtitle, arg=word)
     if data.has_key('en_definitions') and data['en_definitions']:
         for type in data['en_definitions']:
             for line in data['en_definitions'][type]:
