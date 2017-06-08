@@ -81,7 +81,7 @@ def search(word):
     title = "%s [%s]" % (word, pron)
     feedback.addItem(title=title, arg=word)
     for chinese in data['definition'].decode("utf-8").split('\n'):
-        feedback.addItem(title = chinese, arg = word)
+        feedback.addItem(title=chinese, arg=word)
 
     if data.has_key('en_definitions') and data['en_definitions']:
         for type in data['en_definitions']:
