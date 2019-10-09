@@ -25,7 +25,7 @@ CLIENT_ID = '7f652079ade6d4fa4eec'
 SEARCH_API = 'https://api.shanbay.com/bdc/search/'
 LEARNING_API = 'https://api.shanbay.com/bdc/learning/'
 AUTHORIZE_API = 'https://api.shanbay.com/oauth2/authorize/'
-REDIRECT_URL = 'https://api.shanbay.com/oauth2/auth/success/'
+REDIRECT_URL = 'https://www.shanbay.com/oauth2/auth/success/'
 VOCABULARY_URL = 'https://www.shanbay.com/bdc/vocabulary/%d/'
 
 
