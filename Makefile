@@ -1,0 +1,18 @@
+version = $(shell cat VERSION)
+git_hash = $(shell git rev-parse --short HEAD)
+
+.PHONY: build package clean
+
+all: clean build package
+
+build:
+	cp info.plist.template info.plist
+	gsed -i -e "s/\$${VERSION}/${version}/" info.plist
+
+
+package:
+	mkdir dist
+	zip -r dist/shanbay-alfred2-${version}-${git_hash}.alfredworkflow . -x \*.git\* -x token -x tags -x dist -x info.plist.template -x \*.DS_Store\* -x \*.pyc\* -x \*snapshot\*
+
+clean:
+	rm -rf dist info.plist
