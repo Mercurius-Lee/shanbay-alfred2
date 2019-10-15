@@ -12,7 +12,7 @@ build:
 
 package:
 	mkdir dist
-	zip -r dist/shanbay-alfred2-${version}-${git_hash}.alfredworkflow . -x \*.git\* -x token -x tags -x dist -x info.plist.template -x \*.DS_Store\* -x \*.pyc\* -x \*snapshot\*
+	zip -r dist/shanbay-alfred2-${version}-${git_hash}.alfredworkflow . -x \*.git\*  -x .idea\* -x token -x tags -x dist\* -x \*.swp -x info.plist.template -x \*.DS_Store\* -x \*.pyc\* -x \*snapshot\*
 
 clean:
 	rm -rf dist info.plist
