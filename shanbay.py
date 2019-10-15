@@ -29,14 +29,15 @@ AUTHORIZE_API = 'https://api.shanbay.com/oauth2/authorize/'
 REDIRECT_URL = 'https://www.shanbay.com/oauth2/auth/success/'
 VOCABULARY_URL = 'https://www.shanbay.com/bdc/vocabulary/%d/'
 
+
 def _get_current_version():
     with open('./VERSION', 'r') as version_file:
         return version_file.read().strip()
+
+
 CURRENT_VERSION = _get_current_version()
 VERSION_DOMAIN = 'shanbay-alfred2-version.alswl.com'
 VERSION_REGEX = r'([0-9]+)\.([0-9]+)\.?([0-9]*)'
-
-
 
 
 def _request(path, params=None, method='GET', data=None, headers=None):
@@ -62,9 +63,10 @@ def _api(path, params=None, method='GET', data=None, headers=None):
     return result['data']
 
 
-def _reslove_dns(domain, type):
-    command = 'dig %s %s | grep -v "^;" | grep -v "^$" | awk -F \'"\' \'{print $2}\'' %(
-        type, domain,
+def _resolve_dns(domain, type_):
+    command = ('dig %s %s | grep -v "^;" | grep -v "^$"' +
+               ' | awk -F \'"\' \'{print $2}\'') % (
+        type_, domain,
     )
     ps = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE,
                           stderr=subprocess.STDOUT)
@@ -111,7 +113,7 @@ def _version_compare(version_a, version_b):
 
 
 def is_upgrade_availabed():
-    available_version = _reslove_dns(VERSION_DOMAIN, 'TXT')
+    available_version = _resolve_dns(VERSION_DOMAIN, 'TXT')
     current_version = CURRENT_VERSION
     try:
         op = _version_compare(available_version, current_version)
@@ -156,13 +158,13 @@ def search(word):
     for chinese in data['definition'].decode("utf-8").split('\n'):
         feedback.addItem(title=chinese, arg=word)
 
-    if data.has_key('en_definitions') and data['en_definitions']:
-        for type in data['en_definitions']:
-            for line in data['en_definitions'][type]:
-                title = type+', '+line
+    if 'en_definitions' in data and data['en_definitions']:
+        for type_ in data['en_definitions']:
+            for line in data['en_definitions'][type_]:
+                title = type_ + ', ' + line
                 if not title:
                     continue
-                feedback.addItem(title = title, arg = word)
+                feedback.addItem(title=title, arg=word)
     feedback.output()
 
 
