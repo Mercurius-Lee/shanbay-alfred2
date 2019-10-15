@@ -13,6 +13,7 @@ import time
 import argparse
 from urlparse import urlparse
 import subprocess
+import re
 
 from alfred.feedback import Feedback
 
@@ -27,6 +28,15 @@ LEARNING_API = 'https://api.shanbay.com/bdc/learning/'
 AUTHORIZE_API = 'https://api.shanbay.com/oauth2/authorize/'
 REDIRECT_URL = 'https://www.shanbay.com/oauth2/auth/success/'
 VOCABULARY_URL = 'https://www.shanbay.com/bdc/vocabulary/%d/'
+
+def _get_current_version():
+    with open('./VERSION', 'r') as version_file:
+        return version_file.read().strip()
+CURRENT_VERSION = _get_current_version()
+VERSION_DOMAIN = 'shanbay-alfred2-version.alswl.com'
+VERSION_REGEX = r'([0-9]+)\.([0-9]+)\.?([0-9]*)'
+
+
 
 
 def _request(path, params=None, method='GET', data=None, headers=None):
@@ -50,6 +60,69 @@ def _api(path, params=None, method='GET', data=None, headers=None):
     if result['status_code'] != 0:
         return None
     return result['data']
+
+
+def _reslove_dns(domain, type):
+    command = 'dig %s %s | grep -v "^;" | grep -v "^$" | awk -F \'"\' \'{print $2}\'' %(
+        type, domain,
+    )
+    ps = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE,
+                          stderr=subprocess.STDOUT)
+    output = ps.communicate()[0]
+    return output
+
+
+def _parse_version(version):
+    match = re.match(VERSION_REGEX, version)
+    if match is None:
+        raise ValueError()
+    major, minor, patch = match.groups()
+    try:
+        return int(major), int(minor), int(patch or 0)
+    except ValueError:
+        return ValueError()
+
+
+def _version_compare(version_a, version_b):
+    try:
+        major_a, minor_a, patch_a = _parse_version(version_a)
+    except ValueError:
+        raise ValueError
+    try:
+        major_b, minor_b, patch_b = _parse_version(version_b)
+    except ValueError:
+        raise ValueError
+    if major_a > major_b:
+        return 'gt'
+    elif major_a < major_b:
+        return 'lt'
+    else:
+        if minor_a > minor_b:
+            return 'gt'
+        elif minor_a < minor_b:
+            return 'lt'
+        else:
+            if patch_a > patch_b:
+                return 'gt'
+            elif patch_a < patch_b:
+                return 'lt'
+            else:
+                return 'eq'
+
+
+def is_upgrade_availabed():
+    available_version = _reslove_dns(VERSION_DOMAIN, 'TXT')
+    current_version = CURRENT_VERSION
+    try:
+        op = _version_compare(available_version, current_version)
+    except ValueError:
+        return False
+    if op == 'gt':
+        return True
+    elif op == 'lt':
+        return False
+    else:
+        return False
 
 
 def save_token(url):
@@ -94,6 +167,8 @@ def search(word):
 
 
 def token_url(url):
+    if is_upgrade_availabed():
+        print('New version is available.')
     if not url.startswith('%s#' % REDIRECT_URL):
         return
     save_token(url)
@@ -116,6 +191,7 @@ def learning(word):
         if e.code == 401:
             return authorize()
         else:
+            data = None
             print('"%s" Add Fail, e: %s' % (word, e))
     if data is None:
         print('"%s" Add Fail' % word)
@@ -167,7 +243,7 @@ def main():
     elif args.open:
         open_word(args.open)
     else:
-        pass
+        raise ValueError()
 
 
 if __name__ == '__main__':
