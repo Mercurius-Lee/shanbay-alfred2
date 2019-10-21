@@ -2,6 +2,7 @@
 # coding: utf-8
 
 import sys
+
 reload(sys)
 sys.setdefaultencoding('utf8')
 
@@ -14,6 +15,7 @@ import argparse
 from urlparse import urlparse
 import subprocess
 import re
+import socket
 
 from alfred.feedback import Feedback
 
@@ -28,6 +30,8 @@ LEARNING_API = 'https://api.shanbay.com/bdc/learning/'
 AUTHORIZE_API = 'https://api.shanbay.com/oauth2/authorize/'
 REDIRECT_URL = 'https://www.shanbay.com/oauth2/auth/success/'
 VOCABULARY_URL = 'https://www.shanbay.com/bdc/vocabulary/%d/'
+VERSION_DOMAIN = 'shanbay-alfred2-version.alswl.com'
+VERSION_REGEX = r'([0-9]+)\.([0-9]+)\.?([0-9]*)'
 
 
 def _get_current_version():
@@ -36,8 +40,6 @@ def _get_current_version():
 
 
 CURRENT_VERSION = _get_current_version()
-VERSION_DOMAIN = 'shanbay-alfred2-version.alswl.com'
-VERSION_REGEX = r'([0-9]+)\.([0-9]+)\.?([0-9]*)'
 
 
 def _request(path, params=None, method='GET', data=None, headers=None):
@@ -63,15 +65,23 @@ def _api(path, params=None, method='GET', data=None, headers=None):
     return result['data']
 
 
-def _resolve_dns(domain, type_):
-    command = ('dig %s %s | grep -v "^;" | grep -v "^$"' +
-               ' | awk -F \'"\' \'{print $2}\'') % (
-        type_, domain,
-    )
-    ps = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE,
-                          stderr=subprocess.STDOUT)
-    output = ps.communicate()[0]
-    return output
+def _fetch_version_by_domain(domain):
+    """
+    eg. request ip is 1.5.0.0, but replace `.0$` to ``, then return 1.5.0
+    :param domain: 
+    :return: version
+    """
+    ip = _resolve_dns(domain)
+    if ip is None:
+        return ip
+    return ip[:-2]
+
+
+def _resolve_dns(domain):
+    try:
+        return socket.gethostbyname(domain)
+    except socket.gaierror:
+        return None
 
 
 def _parse_version(version):
@@ -112,8 +122,11 @@ def _version_compare(version_a, version_b):
                 return 'eq'
 
 
-def is_upgrade_availabed():
-    available_version = _resolve_dns(VERSION_DOMAIN, 'TXT')
+def is_upgrade_available():
+    available_version = _fetch_version_by_domain(VERSION_DOMAIN)
+    if available_version is None:
+        return False
+
     current_version = CURRENT_VERSION
     try:
         op = _version_compare(available_version, current_version)
@@ -169,8 +182,11 @@ def search(word):
 
 
 def token_url(url):
-    if is_upgrade_availabed():
-        print('New version is available.')
+    try:
+        if is_upgrade_available():
+            print('New version is available.')
+    except:
+        pass
     if not url.startswith('%s#' % REDIRECT_URL):
         return
     save_token(url)
