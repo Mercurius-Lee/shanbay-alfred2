@@ -16,6 +16,7 @@ from urlparse import urlparse
 import subprocess
 import re
 import socket
+from distutils.version import LooseVersion
 
 from alfred.feedback import Feedback
 
@@ -31,7 +32,6 @@ AUTHORIZE_API = 'https://api.shanbay.com/oauth2/authorize/'
 REDIRECT_URL = 'https://www.shanbay.com/oauth2/auth/success/'
 VOCABULARY_URL = 'https://www.shanbay.com/bdc/vocabulary/%d/'
 VERSION_DOMAIN = 'shanbay-alfred2-version.alswl.com'
-VERSION_REGEX = r'([0-9]+)\.([0-9]+)\.?([0-9]*)'
 
 
 def _get_current_version():
@@ -84,60 +84,13 @@ def _resolve_dns(domain):
         return None
 
 
-def _parse_version(version):
-    match = re.match(VERSION_REGEX, version)
-    if match is None:
-        raise ValueError()
-    major, minor, patch = match.groups()
-    try:
-        return int(major), int(minor), int(patch or 0)
-    except ValueError:
-        return ValueError()
-
-
-def _version_compare(version_a, version_b):
-    try:
-        major_a, minor_a, patch_a = _parse_version(version_a)
-    except ValueError:
-        raise ValueError
-    try:
-        major_b, minor_b, patch_b = _parse_version(version_b)
-    except ValueError:
-        raise ValueError
-    if major_a > major_b:
-        return 'gt'
-    elif major_a < major_b:
-        return 'lt'
-    else:
-        if minor_a > minor_b:
-            return 'gt'
-        elif minor_a < minor_b:
-            return 'lt'
-        else:
-            if patch_a > patch_b:
-                return 'gt'
-            elif patch_a < patch_b:
-                return 'lt'
-            else:
-                return 'eq'
-
-
 def is_upgrade_available():
     available_version = _fetch_version_by_domain(VERSION_DOMAIN)
     if available_version is None:
         return False
 
     current_version = CURRENT_VERSION
-    try:
-        op = _version_compare(available_version, current_version)
-    except ValueError:
-        return False
-    if op == 'gt':
-        return True
-    elif op == 'lt':
-        return False
-    else:
-        return False
+    return LooseVersion(available_version) > LooseVersion(current_version)
 
 
 def save_token(url):
