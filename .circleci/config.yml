@@ -10,7 +10,7 @@ jobs:
     steps:
       - checkout
       - run:
-          command: python -m unittest it_shanbay.py
+          command: python -m unittest it_shanbay
           name: Test
 
 workflows:
