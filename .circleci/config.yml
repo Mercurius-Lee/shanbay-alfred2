@@ -5,7 +5,8 @@ orbs:
 
 jobs:
   build-and-test:
-    executor: python/2.7.17
+    docker: 
+      - image: circleci/python:2.7.17
     steps:
       - checkout
       - run:

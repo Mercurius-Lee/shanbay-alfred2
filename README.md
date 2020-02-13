@@ -1,5 +1,7 @@
 # Shanbay-Alfred2-Workflow
 
+[![CircleCI](https://circleci.com/gh/alswl/shanbay-alfred2.svg?style=svg)](https://circleci.com/gh/alswl/shanbay-alfred2)
+
 扇贝网 Alfred2 workflow，主要用于单词查询、添加单词到词库、发音。
 
 
